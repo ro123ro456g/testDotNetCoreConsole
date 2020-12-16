@@ -1,0 +1,2 @@
+# testDotNetCoreConsole
+ForTest
