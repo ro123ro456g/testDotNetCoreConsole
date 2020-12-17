@@ -1,2 +1,2 @@
 # testDotNetCoreConsole
-ForTest
+ForTest (SSH)
