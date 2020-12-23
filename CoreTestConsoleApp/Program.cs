@@ -1,4 +1,5 @@
 ﻿using CoreTestConsoleApp.Model;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Management;
 using System.Net.Http;
@@ -14,10 +15,16 @@ namespace CoreTestConsoleApp
         static string pd { get; set; }
         static void Main(string[] args)
         {
+            //設定遇到憑證的反應
+            SetCertificateAction();
+
+            //Load Config檔
+            LoadConfig();
+
             HttpClient httpClient = new HttpClient();
 
             httpClient.BaseAddress = new Uri("https://localhost:44367/");
-            
+
             var responseMessage = httpClient.PostAsync("QuarkService/NewPatcherInfo", new StringContent("", Encoding.UTF8, "application/json"));
             //Interlocked.Increment()
 
@@ -37,11 +44,22 @@ namespace CoreTestConsoleApp
 
                 Console.WriteLine(jsonResult.ToString());
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Console.WriteLine(ex);
                 //throw;
             }
+
+        }
+
+        private static void LoadConfig()
+        {
+            IConfiguration config = new ConfigurationBuilder()
+                          .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                          .Build();
+
+            //config.GetSection("path").Bind(new object());
+            //string a = config["SampleReportPath"];
         }
 
         static void LoadKey()
@@ -114,6 +132,17 @@ namespace CoreTestConsoleApp
             Console.WriteLine(uuid);
 
             return uuid;
+        }
+
+        static void SetCertificateAction()
+        {
+            var handler = new HttpClientHandler();
+            handler.ClientCertificateOptions = ClientCertificateOption.Manual;
+            handler.ServerCertificateCustomValidationCallback =
+                (httpRequestMessage, cert, cetChain, policyErrors) =>
+                {
+                    return true;
+                };
         }
     }
 }
