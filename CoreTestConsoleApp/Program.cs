@@ -1,5 +1,11 @@
-﻿using System;
+﻿using CoreTestConsoleApp.Model;
+using System;
+using System.Management;
 using System.Net.Http;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace CoreTestConsoleApp
 {
@@ -8,10 +14,34 @@ namespace CoreTestConsoleApp
         static string pd { get; set; }
         static void Main(string[] args)
         {
-
-
-            Console.WriteLine("Hello World!");
             HttpClient httpClient = new HttpClient();
+
+            httpClient.BaseAddress = new Uri("https://localhost:44367/");
+            
+            var responseMessage = httpClient.PostAsync("QuarkService/NewPatcherInfo", new StringContent("", Encoding.UTF8, "application/json"));
+            //Interlocked.Increment()
+
+            Task.WaitAll(responseMessage);
+
+            HttpResponseMessage httpResponseMessage = responseMessage.Result;
+
+            try
+            {
+                var json = httpResponseMessage.Content.ReadAsStringAsync();
+
+                Task.WaitAll(json);
+
+                var jsonResult = json.Result;
+
+                JsonSerializer.Deserialize<PackageConfigModel>(jsonResult.ToString());
+
+                Console.WriteLine(jsonResult.ToString());
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex);
+                //throw;
+            }
         }
 
         static void LoadKey()
@@ -62,6 +92,28 @@ namespace CoreTestConsoleApp
             // Stops Receving Keys Once Enter is Pressed
             while (key.Key != ConsoleKey.Enter);
 
+        }
+
+        static string GetUUID()
+        {
+            string uuid = string.Empty;
+
+            ManagementClass mc = new ManagementClass("Win32_ComputerSystemProduct");
+
+            ManagementObjectCollection moc = mc.GetInstances();
+
+            foreach (ManagementObject mo in moc)
+            {
+
+                uuid = mo.Properties["UUID"].Value.ToString();
+
+                break;
+
+            }
+
+            Console.WriteLine(uuid);
+
+            return uuid;
         }
     }
 }
