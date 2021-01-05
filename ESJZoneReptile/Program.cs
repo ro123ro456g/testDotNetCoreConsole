@@ -11,15 +11,22 @@ namespace ESJZoneReptile
     {
         static void Main(string[] args)
         {
+            //AsyncContext.Run(() => MainAsync(args));
+
+            MainAsync(args).GetAwaiter().GetResult();
+        }
+
+        static async Task MainAsync(string[] args)
+        {
             HttpClient httpClient = new HttpClient();
 
             string url = "https://www.esjzone.cc/detail/1579237880.html";
 
-            Task<HttpResponseMessage> asyncHtml = httpClient.GetAsync(url);
+            var html = await httpClient.GetAsync(url);
 
-            Task.WaitAll();
+            //Task.WaitAll(asyncHtml);
 
-            HttpResponseMessage html = asyncHtml.Result;
+            //HttpResponseMessage html = asyncHtml.Result;
 
             if (html.StatusCode == HttpStatusCode.OK)
             {
@@ -28,13 +35,17 @@ namespace ESJZoneReptile
                 {
                     string responseResult = html.Content.ReadAsStringAsync().Result;//取得內容
 
-                    Task<IDocument> loadDom = context.OpenAsync(res => res.Content(responseResult));
+                    Task<IDocument> loadChapterDom = context.OpenAsync(res => res.Content(responseResult));
 
-                    Task.WaitAll();
+                    //釋放節省記憶體?
+                    //asyncHtml.Dispose();
+                    html.Dispose();
 
-                    IDocument dom = loadDom.Result;
+                    Task.WaitAll(loadChapterDom);
 
-                    IHtmlCollection<IElement> chapterlist = dom.QuerySelectorAll("#chapterList");
+                    IDocument chapterDom = loadChapterDom.Result;
+
+                    IHtmlCollection<IElement> chapterlist = chapterDom.QuerySelectorAll("#chapterList");
 
                     //chapterlist.Children("a");
 
@@ -57,11 +68,11 @@ namespace ESJZoneReptile
 
                         //    if (b.TagName == "a")
                         //    {
-                                
+
                         //    }
                         //}
 
-                        
+
                     }
 
                 }
