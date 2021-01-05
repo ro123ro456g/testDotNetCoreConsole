@@ -3,6 +3,7 @@ using Microsoft.Extensions.Configuration;
 using System;
 using System.Management;
 using System.Net.Http;
+using System.Net.Security;
 using System.Text;
 using System.Text.Json;
 using System.Threading;
@@ -40,7 +41,12 @@ namespace CoreTestConsoleApp
 
                 var jsonResult = json.Result;
 
-                JsonSerializer.Deserialize<PackageConfigModel>(jsonResult.ToString());
+                //TODO:版本判斷 未完成
+                PackageConfigModel newPackage = JsonSerializer.Deserialize<PackageConfigModel>(jsonResult.ToString());
+
+                Version newVer = new Version(newPackage.PackageVersion);
+
+
 
                 Console.WriteLine(jsonResult.ToString());
             }
@@ -141,7 +147,12 @@ namespace CoreTestConsoleApp
             handler.ServerCertificateCustomValidationCallback =
                 (httpRequestMessage, cert, cetChain, policyErrors) =>
                 {
-                    return true;
+                    if (policyErrors == SslPolicyErrors.None)
+                    {
+                        return true;
+                    }
+
+                    return false;
                 };
         }
     }
