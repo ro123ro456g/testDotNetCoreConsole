@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Net.Http;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using AngleSharp;
 using AngleSharp.Dom;
@@ -11,6 +13,8 @@ namespace ESJZoneReptile
     {
         static void Main(string[] args)
         {
+            //TODO: 增加讀取json或是 console.Read 輸入url、輸出txt路徑、產生類型設定 (ex:全章節輸出一檔或每章節輸出一檔)
+
             //AsyncContext.Run(() => MainAsync(args));
 
             MainAsync(args).GetAwaiter().GetResult();
@@ -22,64 +26,91 @@ namespace ESJZoneReptile
 
             string url = "https://www.esjzone.cc/detail/1579237880.html";
 
-            var html = await httpClient.GetAsync(url);
-
-            //Task.WaitAll(asyncHtml);
-
-            //HttpResponseMessage html = asyncHtml.Result;
-
+            HttpResponseMessage html = await httpClient.GetAsync(url);
+            
             if (html.StatusCode == HttpStatusCode.OK)
             {
                 var config = AngleSharp.Configuration.Default;
-                using (var context = BrowsingContext.New(config))
+                using (var htmlReaderContext = BrowsingContext.New(config))
                 {
-                    string responseResult = html.Content.ReadAsStringAsync().Result;//取得內容
+                    //取得內容
+                    string responseResult = await html.Content.ReadAsStringAsync();
 
-                    Task<IDocument> loadChapterDom = context.OpenAsync(res => res.Content(responseResult));
+                    IDocument chapterDom = await htmlReaderContext.OpenAsync(res => res.Content(responseResult));
 
                     //釋放節省記憶體?
-                    //asyncHtml.Dispose();
                     html.Dispose();
 
-                    Task.WaitAll(loadChapterDom);
+                    StringBuilder stringBuilder = new StringBuilder();
 
-                    IDocument chapterDom = loadChapterDom.Result;
+
+                    IHtmlCollection<IElement> bookTitle = chapterDom.QuerySelectorAll("h2");
+
+                    stringBuilder.Append(bookTitle[0].TextContent);
+                    stringBuilder.Append("\r\n\r\n");
 
                     IHtmlCollection<IElement> chapterlist = chapterDom.QuerySelectorAll("#chapterList");
-
-                    //chapterlist.Children("a");
-
-                    foreach (IElement a in chapterlist.Children("a"))
+                    int index = 1;
+                    foreach (IElement element_A_Tag in chapterlist.Children("a"))
                     {
                         //chapterlist.Children();
 
                         //讀取a元素(超聯結) 底下全部的字
-                        Console.Write(a.TextContent);
+                        Console.Write(index + " ");
 
-                        Console.Write(a.Attributes["href"].Value);
+                        string chapterTitle = element_A_Tag.TextContent;
+                        Console.Write(chapterTitle);
+                        stringBuilder.Append(index);
+                        stringBuilder.Append(" ");
+                        //內文已有標題則此處不在加標題
+                        //stringBuilder.Append(chapterTitle);
+                        //stringBuilder.Append("\r\n\r\n");
+
+                        string chapterHyperLink = element_A_Tag.Attributes["href"].Value;
+
+                        Console.Write(chapterHyperLink);
                         Console.WriteLine();
 
-                        //foreach (var b in a.ele)
-                        //{
-                        //    Console.Write(b.TextContent);
+                        #region 小說內文
 
-                        //    Console.Write(b.Attributes["href"]);
-                        //    Console.WriteLine();
+                        IDocument contentDom;
+                        using (HttpClient contentHttpClient = new HttpClient())
+                        {
+                            using (HttpResponseMessage contentHtml = await contentHttpClient.GetAsync(chapterHyperLink))
+                            {
+                                //取得內容
+                                string contentResponseResult = await contentHtml.Content.ReadAsStringAsync();
 
-                        //    if (b.TagName == "a")
-                        //    {
+                                //增長request間隔時間 避免被誤認為ddos
+                                Thread.Sleep(200);
 
-                        //    }
-                        //}
+                                //內文在 .forum-content children <p>裡面
+                                contentDom = await htmlReaderContext.OpenAsync(res => res.Content(contentResponseResult));
+                            }
+                        }
 
+                        IHtmlCollection<IElement> contentText = contentDom.QuerySelectorAll(".forum-content");
 
+                        foreach (IElement content_P_Element in contentText.Children("p"))
+                        {
+                            string strContent = content_P_Element.TextContent;
+                            if (strContent.Length > 0 && !string.IsNullOrEmpty(strContent))
+                            {
+                                stringBuilder.Append("\r\n");
+                                stringBuilder.Append(strContent);
+                                stringBuilder.Append("\r\n");
+                            }
+                        }
+                        #endregion
+
+                        index++;
                     }
-
+                    FileUtil.WriteFile("./Output.txt", stringBuilder.ToString());
                 }
-
             }
 
             //Console.WriteLine("Hello World!");
         }
+
     }
 }
