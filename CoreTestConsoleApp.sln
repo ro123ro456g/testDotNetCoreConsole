@@ -5,7 +5,9 @@ VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTestConsoleApp", "CoreTestConsoleApp\CoreTestConsoleApp.csproj", "{26AE31CF-389C-47A4-A0B4-E74C9F3DD02C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESJZoneReptile", "ESJZoneReptile\ESJZoneReptile.csproj", "{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESJZoneReptile", "ESJZoneReptile\ESJZoneReptile.csproj", "{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTPWebClimb", "CustomWebClimb\NTPWebClimb.csproj", "{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
