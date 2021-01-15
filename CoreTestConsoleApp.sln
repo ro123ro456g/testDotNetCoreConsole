@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CoreTestConsoleApp", "CoreT
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESJZoneReptile", "ESJZoneReptile\ESJZoneReptile.csproj", "{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NTPWebClimb", "CustomWebClimb\NTPWebClimb.csproj", "{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTPWebClimb", "NTPWebClimb\NTPWebClimb.csproj", "{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,10 +23,10 @@ Global
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{71263AB5-ADF6-41CE-AA4C-0031F47C2C03}.Release|Any CPU.Build.0 = Release|Any CPU
-		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{E59A27CE-EE6E-44F9-8FD8-E6E0EE473643}.Release|Any CPU.Build.0 = Release|Any CPU
+		{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
