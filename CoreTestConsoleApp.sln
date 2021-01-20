@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESJZoneReptile", "ESJZoneRe
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTPWebClimb", "NTPWebClimb\NTPWebClimb.csproj", "{095FD93F-CD56-4BCE-97BC-B30D8F4DB436}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CreateSqlScript", "CreateSqlScript\CreateSqlScript.csproj", "{56C5B9AC-BE5F-4244-8B0D-7A4F5C170AAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CreateSqlScript", "CreateSqlScript\CreateSqlScript.csproj", "{56C5B9AC-BE5F-4244-8B0D-7A4F5C170AAA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaplestoryJanKenPon", "MaplestoryJanKenPon\MaplestoryJanKenPon.csproj", "{0BBD9365-DFFD-4C8A-A431-770AAEE51A35}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{56C5B9AC-BE5F-4244-8B0D-7A4F5C170AAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56C5B9AC-BE5F-4244-8B0D-7A4F5C170AAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56C5B9AC-BE5F-4244-8B0D-7A4F5C170AAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0BBD9365-DFFD-4C8A-A431-770AAEE51A35}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0BBD9365-DFFD-4C8A-A431-770AAEE51A35}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0BBD9365-DFFD-4C8A-A431-770AAEE51A35}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0BBD9365-DFFD-4C8A-A431-770AAEE51A35}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
