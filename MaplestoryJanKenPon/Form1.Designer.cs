@@ -46,6 +46,8 @@
             this.TipPon = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
             this.Lazy = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
+            this.label7 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // BtnBack
@@ -73,7 +75,7 @@
             // BtnJan
             // 
             this.BtnJan.Font = new System.Drawing.Font("微軟正黑體", 9F);
-            this.BtnJan.Location = new System.Drawing.Point(246, 46);
+            this.BtnJan.Location = new System.Drawing.Point(574, 46);
             this.BtnJan.Name = "BtnJan";
             this.BtnJan.Size = new System.Drawing.Size(93, 76);
             this.BtnJan.TabIndex = 2;
@@ -84,7 +86,7 @@
             // BtnKen
             // 
             this.BtnKen.Font = new System.Drawing.Font("微軟正黑體", 9F);
-            this.BtnKen.Location = new System.Drawing.Point(426, 46);
+            this.BtnKen.Location = new System.Drawing.Point(264, 46);
             this.BtnKen.Name = "BtnKen";
             this.BtnKen.Size = new System.Drawing.Size(93, 76);
             this.BtnKen.TabIndex = 3;
@@ -95,7 +97,7 @@
             // BtnPon
             // 
             this.BtnPon.Font = new System.Drawing.Font("微軟正黑體", 9F);
-            this.BtnPon.Location = new System.Drawing.Point(607, 46);
+            this.BtnPon.Location = new System.Drawing.Point(420, 46);
             this.BtnPon.Name = "BtnPon";
             this.BtnPon.Size = new System.Drawing.Size(93, 76);
             this.BtnPon.TabIndex = 4;
@@ -107,7 +109,7 @@
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.label1.Location = new System.Drawing.Point(241, 125);
+            this.label1.Location = new System.Drawing.Point(569, 125);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(57, 25);
             this.label1.TabIndex = 5;
@@ -117,7 +119,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.label2.Location = new System.Drawing.Point(421, 125);
+            this.label2.Location = new System.Drawing.Point(259, 125);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(57, 25);
             this.label2.TabIndex = 6;
@@ -127,7 +129,7 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.label3.Location = new System.Drawing.Point(602, 128);
+            this.label3.Location = new System.Drawing.Point(415, 128);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(57, 25);
             this.label3.TabIndex = 7;
@@ -137,7 +139,7 @@
             // 
             this.CountJan.AutoSize = true;
             this.CountJan.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.CountJan.Location = new System.Drawing.Point(304, 125);
+            this.CountJan.Location = new System.Drawing.Point(632, 125);
             this.CountJan.Name = "CountJan";
             this.CountJan.Size = new System.Drawing.Size(24, 25);
             this.CountJan.TabIndex = 8;
@@ -147,7 +149,7 @@
             // 
             this.CountKen.AutoSize = true;
             this.CountKen.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.CountKen.Location = new System.Drawing.Point(484, 125);
+            this.CountKen.Location = new System.Drawing.Point(322, 125);
             this.CountKen.Name = "CountKen";
             this.CountKen.Size = new System.Drawing.Size(24, 25);
             this.CountKen.TabIndex = 9;
@@ -157,7 +159,7 @@
             // 
             this.CountPon.AutoSize = true;
             this.CountPon.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.CountPon.Location = new System.Drawing.Point(665, 125);
+            this.CountPon.Location = new System.Drawing.Point(478, 125);
             this.CountPon.Name = "CountPon";
             this.CountPon.Size = new System.Drawing.Size(24, 25);
             this.CountPon.TabIndex = 10;
@@ -177,7 +179,7 @@
             // 
             this.TipJan.AutoSize = true;
             this.TipJan.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.TipJan.Location = new System.Drawing.Point(256, 160);
+            this.TipJan.Location = new System.Drawing.Point(584, 160);
             this.TipJan.Name = "TipJan";
             this.TipJan.Size = new System.Drawing.Size(54, 25);
             this.TipJan.TabIndex = 12;
@@ -187,7 +189,7 @@
             // 
             this.TipKen.AutoSize = true;
             this.TipKen.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.TipKen.Location = new System.Drawing.Point(436, 160);
+            this.TipKen.Location = new System.Drawing.Point(274, 160);
             this.TipKen.Name = "TipKen";
             this.TipKen.Size = new System.Drawing.Size(54, 25);
             this.TipKen.TabIndex = 13;
@@ -197,7 +199,7 @@
             // 
             this.TipPon.AutoSize = true;
             this.TipPon.Font = new System.Drawing.Font("微軟正黑體", 15F);
-            this.TipPon.Location = new System.Drawing.Point(617, 160);
+            this.TipPon.Location = new System.Drawing.Point(430, 160);
             this.TipPon.Name = "TipPon";
             this.TipPon.Size = new System.Drawing.Size(54, 25);
             this.TipPon.TabIndex = 14;
@@ -219,15 +221,37 @@
             this.Lazy.Font = new System.Drawing.Font("微軟正黑體", 15F);
             this.Lazy.Location = new System.Drawing.Point(706, 68);
             this.Lazy.Name = "Lazy";
-            this.Lazy.Size = new System.Drawing.Size(148, 25);
+            this.Lazy.Size = new System.Drawing.Size(244, 25);
             this.Lazy.TabIndex = 16;
-            this.Lazy.Text = "出\"布\"勝率最高";
+            this.Lazy.Text = "現在出什麼勝率都一樣1/3";
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.label6.Location = new System.Drawing.Point(380, 12);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(153, 25);
+            this.label6.TabIndex = 17;
+            this.label6.Text = "請選擇NPC出的";
+            // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("微軟正黑體", 15F);
+            this.label7.Location = new System.Drawing.Point(901, 160);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(72, 25);
+            this.label7.TabIndex = 18;
+            this.label7.Text = "啊咧咧";
             // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(985, 188);
+            this.Controls.Add(this.label7);
+            this.Controls.Add(this.label6);
             this.Controls.Add(this.Lazy);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.TipPon);
@@ -274,6 +298,8 @@
         private System.Windows.Forms.Label TipPon;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label Lazy;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.Label label7;
     }
 }
 

@@ -18,8 +18,8 @@ namespace MaplestoryJanKenPon
         double PonCount = 0;
         string LastBtn = "";
         const string AnswerRateSame = "現在出什麼勝率都一樣1/3";
-        string AnswerTips1 = "出\"{0}\"勝率最高";
-        string AnswerTips2 = "出\"{0}\"和\"{1}\"勝率最高";
+        string AnswerTips1 = "你出\"{0}\"勝率最高";
+        string AnswerTips2 = "你出\"{0}\"和\"{1}\"勝率最高";
 
         public Form1()
         {
@@ -139,32 +139,32 @@ namespace MaplestoryJanKenPon
 
             if (j > k && j > p)
             {
-                return string.Format(AnswerTips1, "剪刀");
+                return string.Format(AnswerTips1, "石頭");
             }
 
             if (k > j && k > p)
             {
-                return string.Format(AnswerTips1, "石頭");
+                return string.Format(AnswerTips1, "布");
             }
 
             if (p > j && p > k)
             {
-                return string.Format(AnswerTips1, "布");
+                return string.Format(AnswerTips1, "剪刀");
             }
 
             if (j == k)
             {
-                return string.Format(AnswerTips2, "剪刀", "石頭");
+                return string.Format(AnswerTips2, "石頭", "布");
             }
 
             if (k == p)
             {
-                return string.Format(AnswerTips2, "石頭", "布");
+                return string.Format(AnswerTips2, "布", "剪刀");
             }
 
             if (j == p)
             {
-                return string.Format(AnswerTips2, "剪刀", "布");
+                return string.Format(AnswerTips2, "石頭", "剪刀");
             }
 
             return "";
