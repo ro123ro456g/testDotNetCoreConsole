@@ -7,6 +7,7 @@ using System.Linq;
 using System.Net.Http;
 using System.IO;
 using System.Threading.Tasks;
+using System.Collections.Concurrent;
 
 namespace NTPBulletinClimb
 {
@@ -14,13 +15,18 @@ namespace NTPBulletinClimb
     {
         static List<INFO_MAIN> old_bulletins = new List<INFO_MAIN>();
         static List<Info_Attachment> old_att = new List<Info_Attachment>();
+        static readonly HttpClient contentHttpClient = new HttpClient();
+
         static void Main(string[] args)
         {
+            //contentHttpClient = new HttpClient();
             MainAsync(args).GetAwaiter().GetResult();
         }
 
         static async Task MainAsync(string[] args)
         {
+            DateTime processStartTime = DateTime.Now;
+
             IConfiguration config = new ConfigurationBuilder()
               .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
               .Build();
@@ -39,7 +45,7 @@ namespace NTPBulletinClimb
             {
                 conn.Open();
 
-                using (var cmd = new SqlCommand("select top(30)*from [NTPM].[dbo].[INFO_MAIN]", conn))
+                using (var cmd = new SqlCommand("select *from [NTPM].[dbo].[INFO_MAIN]", conn))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -93,6 +99,7 @@ namespace NTPBulletinClimb
 
             foreach (var rowData in old_bulletins)
             {
+                GC.Collect();
                 //全部不對外公開的篩掉 不加入新的資料庫 並記錄
                 //[H_R_IN]
                 //,[H_R_IN_GROUP]
@@ -115,7 +122,7 @@ namespace NTPBulletinClimb
                     //疑似髒資料 額外紀錄
                     dirtyCount++;
 
-                    outputNote.Append("疑似髒資料 未公開的公告 H_ID = ");
+                    outputNote.Append("疑似髒資料 未公開的公告 | H_ID = ");
                     outputNote.Append(rowData.H_ID);
                     outputNote.Append("\r\n");
 
@@ -124,12 +131,13 @@ namespace NTPBulletinClimb
                 }
 
                 int tempParse = 0;
-                if (!int.TryParse(rowData.H_R_IN_PERSONNEL.Trim(), out tempParse))
+                //會內人員 及 議員
+                if (!int.TryParse(rowData.H_R_IN_PERSONNEL.Trim(), out tempParse) || !int.TryParse(rowData.H_R_EF_PERSONNEL.Trim(), out tempParse))
                 {
                     //疑似髒資料 額外紀錄
                     dirtyCount++;
 
-                    outputNote.Append("疑似髒資料 H_R_IN_PERSONNEL包含非數字(個人公告?) H_ID = ");
+                    outputNote.Append("疑似髒資料 H_R_IN_PERSONNEL包含非數字(個人公告?) | H_ID = ");
                     outputNote.Append(rowData.H_ID);
                     outputNote.Append("\r\n");
 
@@ -207,7 +215,7 @@ namespace NTPBulletinClimb
                 catch
                 {//不存在的使用者
                     dirtyCount++;
-                    outputNote.Append("疑似髒資料 不存在的使用者 H_ID = ");
+                    outputNote.Append("疑似髒資料 不存在的使用者 | H_ID = ");
                     outputNote.Append(rowData.H_ID);
                     outputNote.Append("\r\n");
 
@@ -313,10 +321,114 @@ namespace NTPBulletinClimb
                 }
 
                 #region 附件
-                List<string> baIds = new List<string>();
+
                 if (old_att.Any(a => a.HCF_H_ID == rowData.H_ID))
                 {
                     List<Info_Attachment> listAtts = old_att.Where(a => a.HCF_H_ID == rowData.H_ID).ToList();
+                    #region async version 
+                    //ConcurrentBag<StringBuilder> stringBuilders = new ConcurrentBag<StringBuilder>();
+                    //Parallel.ForEach(listAtts, (item) =>
+                    //{
+                    //    float fileLength = 0;
+                    //    string baId = Guid.NewGuid().ToString();
+                    //    string filePath = "";
+                    //    var attDate = DateTime.Parse(item.HCF_FILE_ALTER_DATE).ToString("yyyyMMdd");
+                    //    try
+                    //    {
+                    //        using (HttpClient contentHttpClient = new HttpClient())
+                    //        {
+                    //            var httpclientsync = contentHttpClient.GetAsync(item.HCF_FILE_PATH);
+                    //            Task.WaitAny(httpclientsync);
+                    //            using (HttpResponseMessage response = httpclientsync.Result)
+                    //            {
+                    //                response.EnsureSuccessStatusCode();
+                    //                //圖片
+                    //                var readStreamsync = response.Content.ReadAsStreamAsync();
+                    //                Task.WaitAny(readStreamsync);
+                    //                using (var inputStream = readStreamsync.Result)
+                    //                {
+                    //                    if (!Directory.Exists("./AttFile/BULLETIN/" + attDate))
+                    //                        Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate);
+                    //                    if (!Directory.Exists("./AttFile/BULLETIN/" + attDate + "/" + bmId))
+                    //                        Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate + "/" + bmId);
+
+                    //                    filePath = "BULLETIN/" + attDate + "/" + bmId + "/";
+
+                    //                    using (var fileSave = File.Create("./AttFile/" + filePath + baId))
+                    //                    {
+                    //                        inputStream.Seek(0, SeekOrigin.Begin);
+                    //                        inputStream.CopyTo(fileSave);
+                    //                        fileLength = fileSave.Length / 1024 / 1024;
+                    //                        if (fileLength < 0.01)
+                    //                            fileLength = 0.01f;
+                    //                    }
+                    //                }
+                    //            }
+                    //        }
+                    //    }
+                    //    catch (Exception ex)
+                    //    {
+                    //        var a = ex;
+                    //        //附件失效
+
+                    //        outputNote.Append("公告附件 檔案抓取失敗 對應 HCF_ID = ");
+                    //        outputNote.Append(item.HCF_ID);
+                    //        outputNote.Append("\r\n");
+
+                    //        lostAttachCount++;
+                    //        lostAttachId.Add(item.HCF_ID);
+
+                    //        return;
+                    //    }
+
+                    //    #region Attach Sqlscript
+
+                    //    var filenameIndex = item.HCF_NAME.LastIndexOf('.');
+
+                    //    StringBuilder stringBuilder = new StringBuilder();
+                    //    stringBuilder.Append("INSERT INTO [dbo].[BULLETIN_ATTCH] ([BA_ID], [BM_ID], [FILEPATH], [ORIGIN_FILENAME], [FILENAME], [FILENAME_EXT], [CREATE_USER], [CREATE_DTM], [MODIFY_USER], [MODIFY_DTM], [FILE_SIZE])");
+                    //    stringBuilder.Append("VALUES ( '");
+                    //    stringBuilder.Append(baId);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(bmId);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(filePath);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_NAME.Substring(0, filenameIndex));
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(baId);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_NAME.Substring(filenameIndex + 1));
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_USER_NAME);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_ALTER_DATE);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_FILE_USER_NAME);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(item.HCF_FILE_ALTER_DATE);
+                    //    stringBuilder.Append("', '");
+                    //    stringBuilder.Append(fileLength.ToString("f2"));
+                    //    stringBuilder.Append("'");
+
+                    //    stringBuilder.Append(")");
+                    //    stringBuilder.Append("\r\n");
+
+                    //    stringBuilders.Add(stringBuilder);
+
+                    //    #endregion
+                    //});
+
+                    //Task.WaitAll();
+
+                    ////載完檔案
+                    //foreach (var str in stringBuilders)
+                    //{
+                    //    sqlScript.Append(str);
+                    //    attachInsertCount++;
+                    //}
+                    #endregion
+                    #region sync version oldcode
                     foreach (var item in listAtts)
                     {
                         float fileLength = 0;
@@ -325,29 +437,26 @@ namespace NTPBulletinClimb
                         var attDate = DateTime.Parse(item.HCF_FILE_ALTER_DATE).ToString("yyyyMMdd");
                         try
                         {
-                            using (HttpClient contentHttpClient = new HttpClient())
+                            using (HttpResponseMessage response = await contentHttpClient.GetAsync(item.HCF_FILE_PATH))
                             {
-                                using (HttpResponseMessage response = await contentHttpClient.GetAsync(item.HCF_FILE_PATH))
+                                response.EnsureSuccessStatusCode();
+                                //圖片
+                                using (var inputStream = await response.Content.ReadAsStreamAsync())
                                 {
-                                    response.EnsureSuccessStatusCode();
-                                    //圖片
-                                    using (var inputStream = await response.Content.ReadAsStreamAsync())
+                                    if (!Directory.Exists("./AttFile/BULLETIN/" + attDate))
+                                        Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate);
+                                    if (!Directory.Exists("./AttFile/BULLETIN/" + attDate + "/" + bmId))
+                                        Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate + "/" + bmId);
+
+                                    filePath = "BULLETIN/" + attDate + "/" + bmId + "/";
+
+                                    using (var fileSave = File.Create("./AttFile/" + filePath + baId))
                                     {
-                                        if (!Directory.Exists("./AttFile/BULLETIN/" + attDate))
-                                            Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate);
-                                        if (!Directory.Exists("./AttFile/BULLETIN/" + attDate + "/" + bmId))
-                                            Directory.CreateDirectory("./AttFile/BULLETIN/" + attDate + "/" + bmId);
-
-                                        filePath = "BULLETIN/" + attDate + "/" + bmId + "/";
-
-                                        using (var fileSave = File.Create("./AttFile/" + filePath + baId))
-                                        {
-                                            inputStream.Seek(0, SeekOrigin.Begin);
-                                            inputStream.CopyTo(fileSave);
-                                            fileLength = fileSave.Length / 1024 / 1024;
-                                            if (fileLength < 0.01)
-                                                fileLength = 0.01f;
-                                        }
+                                        inputStream.Seek(0, SeekOrigin.Begin);
+                                        inputStream.CopyTo(fileSave);
+                                        fileLength = fileSave.Length / 1024 / 1024;
+                                        if (fileLength < 0.01)
+                                            fileLength = 0.01f;
                                     }
                                 }
                             }
@@ -356,7 +465,7 @@ namespace NTPBulletinClimb
                         {
                             //附件失效
 
-                            outputNote.Append("公告附件 檔案抓取失敗 對應 HCF_ID = ");
+                            outputNote.Append("公告附件 檔案抓取失敗 對應 | HCF_ID = ");
                             outputNote.Append(item.HCF_ID);
                             outputNote.Append("\r\n");
 
@@ -398,9 +507,11 @@ namespace NTPBulletinClimb
                         sqlScript.Append(")");
                         sqlScript.Append("\r\n");
 
-                        attachInsertCount++;
+                        //attachInsertCount++;
                         #endregion
                     }
+                    #endregion
+
                 }
 
 
@@ -413,7 +524,7 @@ namespace NTPBulletinClimb
             //因髒資料而被排除的公告 的附件
             var lastLostAtt = old_att.Where(a => dirtyDataId.Any(b => b == a.HCF_H_ID)).ToList();
 
-            lostAttachCount += lastLostAtt.Count;
+            int lostBulletinOfAtt = lastLostAtt.Count;
             lostAttachId.AddRange(lastLostAtt.Select(a => a.HCF_H_ID));
 
             //輸出SqlScript
@@ -446,9 +557,31 @@ namespace NTPBulletinClimb
             outputNote.Append("\r\n");
 
             //丟失的附件資料 + 因髒資料而被排除的公告 的附件
-            outputNote.Append("丟失的附件資料 + 因髒資料而被排除的公告 的附件 ");
+            outputNote.Append("丟失的附件資料 (下載不到) :  ");
             outputNote.Append(lostAttachCount);
             outputNote.Append("\r\n");
+
+            outputNote.Append("因髒資料而被排除的公告 的附件 :");
+            outputNote.Append(lostBulletinOfAtt);
+            outputNote.Append("\r\n");
+
+            #region 此邏輯sql script
+            //select im.H_ID,ia.*
+            //from[dbo].[Info_Attachment] as ia
+            //left join[dbo].[INFO_MAIN] as im
+            //on ia.HCF_H_ID = im.H_ID
+            //where im.H_ID is null
+            #endregion
+            outputNote.Append("未細節公告的 (找不到公告的) 附件 :");
+            outputNote.Append(64);
+            outputNote.Append("\r\n");
+
+            var a = (DateTime.Now - processStartTime);
+            outputNote.Append("程式執行時間 ");
+            outputNote.Append(a.Hours + ":" + a.Minutes + ":" + a.Seconds);
+            outputNote.Append(" 秒");
+            outputNote.Append("\r\n");
+
 
             File.WriteAllText("./LogReport.txt", outputNote.ToString());
         }
