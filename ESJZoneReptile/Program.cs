@@ -74,19 +74,16 @@ namespace ESJZoneReptile
                         #region 小說內文
 
                         IDocument contentDom;
-                        using (HttpClient contentHttpClient = new HttpClient())
+                        using (HttpResponseMessage contentHtml = await httpClient.GetAsync(chapterHyperLink))
                         {
-                            using (HttpResponseMessage contentHtml = await contentHttpClient.GetAsync(chapterHyperLink))
-                            {
-                                //取得內容
-                                string contentResponseResult = await contentHtml.Content.ReadAsStringAsync();
+                            //取得內容
+                            string contentResponseResult = await contentHtml.Content.ReadAsStringAsync();
 
-                                //增長request間隔時間 避免被誤認為ddos
-                                Thread.Sleep(200);
+                            //增長request間隔時間 避免被誤認為ddos
+                            Thread.Sleep(200);
 
-                                //內文在 .forum-content children <p>裡面
-                                contentDom = await htmlReaderContext.OpenAsync(res => res.Content(contentResponseResult));
-                            }
+                            //內文在 .forum-content children <p>裡面
+                            contentDom = await htmlReaderContext.OpenAsync(res => res.Content(contentResponseResult));
                         }
 
                         IHtmlCollection<IElement> contentText = contentDom.QuerySelectorAll(".forum-content");
