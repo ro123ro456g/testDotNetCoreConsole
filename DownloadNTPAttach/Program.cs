@@ -21,6 +21,16 @@ namespace DownloadNTPAttach
         static readonly HttpClient Diversion7 = new HttpClient();
         static readonly HttpClient Diversion8 = new HttpClient();
         static readonly HttpClient Diversion9 = new HttpClient();
+        static readonly HttpClient Diversion10 = new HttpClient();
+        static readonly HttpClient Diversion11 = new HttpClient();
+        static readonly HttpClient Diversion12 = new HttpClient();
+        static readonly HttpClient Diversion13 = new HttpClient();
+        static readonly HttpClient Diversion14 = new HttpClient();
+        static readonly HttpClient Diversion15 = new HttpClient();
+        static readonly HttpClient Diversion16 = new HttpClient();
+        static readonly HttpClient Diversion17 = new HttpClient();
+        static readonly HttpClient Diversion18 = new HttpClient();
+        static readonly HttpClient Diversion19 = new HttpClient();
         static HttpClient[] httpClients = new HttpClient[]
         {
             Diversion0,
@@ -32,7 +42,17 @@ namespace DownloadNTPAttach
             Diversion6,
             Diversion7,
             Diversion8,
-            Diversion9
+            Diversion9,
+            Diversion10,
+            Diversion11,
+            Diversion12,
+            Diversion13,
+            Diversion14,
+            Diversion15,
+            Diversion16,
+            Diversion17,
+            Diversion18,
+            Diversion19,
         };
         static string httpClient = "Diversion";
         static void Main(string[] args)
@@ -106,7 +126,7 @@ namespace DownloadNTPAttach
                 catch 
                 {
                 Retry:
-                    if (retryCount < 9)
+                    if (retryCount < 19)
                     {//切換分流重試
                         retryCount++;
                         Console.WriteLine($"附件下載失敗 重新嘗試第{retryCount + 1}次 {bulletinAttach.BA_ID} , {bulletinAttach.HCF_ID}");
@@ -141,6 +161,7 @@ namespace DownloadNTPAttach
                                     }
                                 }
                             }
+                            goto RetrySuccess;
                         }
                         catch
                         {
@@ -158,6 +179,7 @@ namespace DownloadNTPAttach
                     }
                 }
 
+            RetrySuccess:
                 #region Attach Sqlscript
 
                 //var filenameIndex = bulletinAttach.HCF_NAME.LastIndexOf('.');
