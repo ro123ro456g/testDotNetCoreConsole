@@ -231,7 +231,7 @@ namespace DownloadNTPAttach
             }
 
 
-            File.WriteAllText("./sqlScript.txt", sqlScript.ToString());
+            File.WriteAllText("./ATTsqlScript.txt", sqlScript.ToString());
 
             foreach(var str in tempReportNote)
             {
@@ -263,7 +263,7 @@ namespace DownloadNTPAttach
             reportNote.Append("\r\n");
 
 
-            File.WriteAllText("./LogReport.txt", reportNote.ToString());
+            File.WriteAllText("./ATTLogReport.txt", reportNote.ToString());
         }
     }
 }
