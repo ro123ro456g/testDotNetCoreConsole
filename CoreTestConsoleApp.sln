@@ -15,7 +15,9 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MaplestoryJanKenPon", "Mapl
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NTPBulletinClimb", "NTPBulletinClimb\NTPBulletinClimb.csproj", "{0620EA90-B6D0-4364-97E4-E6B4DD8118C0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadNTPAttach", "DownloadNTPAttach\DownloadNTPAttach.csproj", "{E5F5EFA1-AF09-4B3E-87F5-BE7BED7846CD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DownloadNTPAttach", "DownloadNTPAttach\DownloadNTPAttach.csproj", "{E5F5EFA1-AF09-4B3E-87F5-BE7BED7846CD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DownloadNTPAttNoConvert", "DownloadNTPAttNoConvert\DownloadNTPAttNoConvert.csproj", "{6B5A28D2-6E59-4369-B1E4-B8069244DBD5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -51,6 +53,10 @@ Global
 		{E5F5EFA1-AF09-4B3E-87F5-BE7BED7846CD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5F5EFA1-AF09-4B3E-87F5-BE7BED7846CD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5F5EFA1-AF09-4B3E-87F5-BE7BED7846CD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B5A28D2-6E59-4369-B1E4-B8069244DBD5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B5A28D2-6E59-4369-B1E4-B8069244DBD5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B5A28D2-6E59-4369-B1E4-B8069244DBD5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B5A28D2-6E59-4369-B1E4-B8069244DBD5}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

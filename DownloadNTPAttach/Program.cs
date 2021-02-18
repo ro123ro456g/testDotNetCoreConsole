@@ -54,7 +54,6 @@ namespace DownloadNTPAttach
             Diversion18,
             Diversion19,
         };
-        static string httpClient = "Diversion";
         static void Main(string[] args)
         {
             MainAsync(args).GetAwaiter().GetResult();
@@ -78,6 +77,8 @@ namespace DownloadNTPAttach
             ConcurrentBag<StringBuilder> tempReportNote = new ConcurrentBag<StringBuilder>();
 
             ConcurrentBag<StringBuilder> tempSqlScript = new ConcurrentBag<StringBuilder>();
+
+            ConcurrentBag<Bulletin_Attach> failAtt = new ConcurrentBag<Bulletin_Attach>();
 
             //轉出數量
             int attachInsertCount = 0;
@@ -112,7 +113,7 @@ namespace DownloadNTPAttach
 
                             filePath = "BULLETIN/" + attDate + "/" + bulletinAttach.BM_ID + "/";
 
-                            using (var fileSave = File.Create("./AttFile/" + filePath + baId))
+                            using (var fileSave = File.Create("./AttFile/" + filePath + baId + "." + bulletinAttach.FILENAME_EXT))
                             {
                                 inputStream.Seek(0, SeekOrigin.Begin);
                                 inputStream.CopyTo(fileSave);
@@ -123,10 +124,10 @@ namespace DownloadNTPAttach
                         }
                     }
                 }
-                catch 
+                catch
                 {
                 Retry:
-                    if (retryCount < 19)
+                    if (retryCount < 9)
                     {//切換分流重試
                         retryCount++;
                         Console.WriteLine($"附件下載失敗 重新嘗試第{retryCount + 1}次 {bulletinAttach.BA_ID} , {bulletinAttach.HCF_ID}");
@@ -151,7 +152,7 @@ namespace DownloadNTPAttach
 
                                     filePath = "BULLETIN/" + attDate + "/" + bulletinAttach.BM_ID + "/";
 
-                                    using (var fileSave = File.Create("./AttFile/" + filePath + baId))
+                                    using (var fileSave = File.Create("./AttFile/" + filePath + baId + "." + bulletinAttach.FILENAME_EXT))
                                     {
                                         inputStream.Seek(0, SeekOrigin.Begin);
                                         inputStream.CopyTo(fileSave);
@@ -175,6 +176,8 @@ namespace DownloadNTPAttach
                         tempReportNote.Add(new StringBuilder(a));
                         lostAttachId.Add(bulletinAttach.HCF_ID);
 
+                        failAtt.Add(bulletinAttach);
+
                         return;
                     }
                 }
@@ -195,7 +198,7 @@ namespace DownloadNTPAttach
                 stringBuilder.Append("', '");
                 stringBuilder.Append(bulletinAttach.ORIGIN_FILENAME);
                 stringBuilder.Append("', '");
-                stringBuilder.Append(bulletinAttach.FILEPATH);
+                stringBuilder.Append(bulletinAttach.FILENAME);
                 stringBuilder.Append("', '");
                 stringBuilder.Append(bulletinAttach.FILENAME_EXT);
                 stringBuilder.Append("', '");
@@ -233,7 +236,7 @@ namespace DownloadNTPAttach
 
             File.WriteAllText("./ATTsqlScript.txt", sqlScript.ToString());
 
-            foreach(var str in tempReportNote)
+            foreach (var str in tempReportNote)
             {
                 reportNote.Append(str);
             }
@@ -264,6 +267,37 @@ namespace DownloadNTPAttach
 
 
             File.WriteAllText("./ATTLogReport.txt", reportNote.ToString());
+
+            StringBuilder faillist = new StringBuilder();
+
+            faillist.Append("HCF_H_ID");
+            faillist.Append("\t");
+            faillist.Append("URL");
+            faillist.Append("\t");
+            faillist.Append("檔名");
+            faillist.Append("\t");
+            faillist.Append("附件新增人");
+            faillist.Append("\t");
+            faillist.Append("日期");
+            faillist.Append("\t");
+            foreach (var bulletin_Attach in failAtt)
+            {
+                faillist.Append(bulletin_Attach.HCF_ID);
+                faillist.Append("\t");
+                faillist.Append(bulletin_Attach.url);
+                faillist.Append("\t");
+                faillist.Append(bulletin_Attach.ORIGIN_FILENAME);
+                faillist.Append("\t");
+                faillist.Append(bulletin_Attach.MODIFY_USER);
+                faillist.Append("\t");
+                faillist.Append(bulletin_Attach.MODIFY_DTM);
+                faillist.Append("\t");
+
+                faillist.Append("\r\n");
+            }
+
+            File.WriteAllText("./ATTFileList.txt", faillist.ToString());
+
         }
     }
 }

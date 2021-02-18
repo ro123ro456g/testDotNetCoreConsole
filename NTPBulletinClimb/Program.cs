@@ -45,7 +45,7 @@ namespace NTPBulletinClimb
             {
                 conn.Open();
 
-                using (var cmd = new SqlCommand("select *from [NTPM].[dbo].[INFO_MAIN]", conn))
+                using (var cmd = new SqlCommand(@"select *from [NTPM].[dbo].[INFO_MAIN] where H_ST_ID = 1", conn))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -56,7 +56,10 @@ namespace NTPBulletinClimb
                     }
                 }
 
-                using (var cmd = new SqlCommand("select*from[dbo].[Info_Attachment]", conn))
+                using (var cmd = new SqlCommand(@"select ia.*from[dbo].[Info_Attachment] as ia
+                                                  join[dbo].[INFO_MAIN] as im
+                                                      on im.H_ID = ia.HCF_H_ID
+                                                  where H_ST_ID = 1", conn))
                 {
                     using (var reader = cmd.ExecuteReader())
                     {
@@ -170,7 +173,7 @@ namespace NTPBulletinClimb
                 if (rowData.H_ST_ID != "1")
                 {
                     //非公告類型
-                    outputNote.Append("非公告 | H_ID = ");
+                    outputNote.Append("非共用表格 | H_ID = ");
                     outputNote.Append(rowData.H_ID);
                     outputNote.Append("\r\n");
 
@@ -617,7 +620,7 @@ namespace NTPBulletinClimb
             outputNote.Append(totalCount);
             outputNote.Append("\r\n");
             //轉出的公告筆數
-            outputNote.Append("公告輸出筆數為 : ");
+            outputNote.Append("一般公告 輸出筆數為 : ");
             outputNote.Append(insertCount);
             outputNote.Append("\r\n");
 
