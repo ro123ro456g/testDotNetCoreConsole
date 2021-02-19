@@ -65,6 +65,13 @@ namespace DownloadNTPAttach
 
             secretData secretData = new secretData();
 
+            //建立資料夾
+            if (!Directory.Exists("./AttFile"))
+                Directory.CreateDirectory("./AttFile");
+            if (!Directory.Exists("./AttFile/BULLETIN"))
+                Directory.CreateDirectory("./AttFile/BULLETIN");
+
+
             //轉失敗
             ConcurrentBag<string> lostAttachId = new ConcurrentBag<string>();
 
