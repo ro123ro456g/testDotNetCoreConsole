@@ -38,7 +38,8 @@ namespace ESJZoneReptile
             //string url = "https://www.esjzone.cc/detail/1550158003.html";   //轉生賢者的異世界生活～取得副職業並成為世界最強
             //string url = "https://www.esjzone.cc/detail/1590909027.html";   //最弱的馴養師開啟的撿垃圾的旅途
             //string url = "https://www.esjzone.cc/detail/1578765913.html";   //輪迴轉生物語
-            string url = "https://www.esjzone.cc/detail/1543303989.html";   //為了扭轉沒落命運，邁向鍛冶工匠之路
+            //string url = "https://www.esjzone.cc/detail/1543303989.html";   //為了扭轉沒落命運，邁向鍛冶工匠之路
+            string url = "https://www.esjzone.cc/detail/1609771641.html";   //萬能「村莊製作」外掛輕鬆慢生活　～這是村子，怎麼了？～
 
             HttpResponseMessage html = await httpClient.GetAsync(url);
             
