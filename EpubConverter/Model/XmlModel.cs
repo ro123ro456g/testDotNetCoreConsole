@@ -27,6 +27,15 @@ namespace EpubConverter.Model
             return false;
         }
 
+        //public XmlElement FindChild(XmlElement xmlElement, string elementName)
+        //{
+        //    if (xmlElement.Childrens != null)
+        //    {
+        //        return FindChild(xmlElement.Childrens, elementName);
+        //    }
+        //    if(xmlElement.Name == )
+        //}
+
         public string GetValue(string elementName)
         {
             var targetElement = GetElement(elementName);
@@ -50,7 +59,7 @@ namespace EpubConverter.Model
         }
 
         public XmlElement GetElement(string elementName)
-        {
+        {//TODO: 應該要查出List 全部Element
             if (this.Elements.Any(x => x.Name == elementName))
             {
                 return this.Elements.Single(x => x.Name == elementName);
@@ -94,7 +103,29 @@ namespace EpubConverter.Model
             return string.IsNullOrWhiteSpace(this.Name) && this.Attributes.Count <= 0 && this.Childrens.Count <= 0;
         }
 
+        public XmlElement GetElement(string elementName)
+        {
+            if (this.Name == elementName)
+            {
+                return this;
+            }
+            else if (this.Childrens.Any(x => x.Name == elementName))
+            {
+                return this.Childrens.Single(x => x.Name == elementName);
+            }
+            else
+            {
+                foreach (XmlElement ele in this.Childrens)
+                {
+                    if (ele.Childrens.Any(x => x.Name == elementName))
+                    {
+                        return ele.Childrens.Single(x => x.Name == elementName);
+                    }
+                }
+            }
 
+            return null;
+        }
     }
 
     public class XmlAttribute
