@@ -16,6 +16,13 @@ namespace CoreTestConsoleApp
         static string pd { get; set; }
         static void Main(string[] args)
         {
+            for(int i = 0; i < 38; i++)
+            {
+                string url = $@"https://www.esjzone.cc/list-11/{i}.html,";
+
+                Console.Write(url);
+            }
+
             //設定遇到憑證的反應
             SetCertificateAction();
 
