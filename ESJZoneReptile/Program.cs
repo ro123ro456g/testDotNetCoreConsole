@@ -179,93 +179,125 @@ namespace ESJZoneReptile
 
                             IHtmlCollection<IElement> novelsEle = novelListDom.QuerySelectorAll(novelBlock + novelcard);
 
+                            bool continueFlag = false;
+
                             foreach (var novel in novelsEle)
                             {
+                                Thread.Sleep(300);
+
                                 string novelName = novel.TextContent;
                                 string novelurl = Config["DomainUrl"] + novel.Attributes["href"].Value;
 
-                                IDocument chapterDom;
-                                using (HttpResponseMessage novelHtml = await httpClient.GetAsync(novelurl))
+                                //繼續
+                                if (!continueFlag)
                                 {
-                                    string novelPageResponse = await novelHtml.Content.ReadAsStringAsync();
-
-                                    chapterDom = await htmlReaderContext.OpenAsync(res => res.Content(novelPageResponse));
-
-                                    StringBuilder stringBuilder = new StringBuilder();
-
-
-                                    IHtmlCollection<IElement> bookTitle = chapterDom.QuerySelectorAll("h2");
-
-                                    stringBuilder.Append(bookTitle[0].TextContent);
-                                    stringBuilder.Append("\r\n\r\n");
-
-                                    IHtmlCollection<IElement> chapterlist = chapterDom.QuerySelectorAll("#chapterList");
-                                    int index = 1;
-                                    foreach (IElement element_A_Tag in chapterlist.Children("a"))
+                                    if (!novelName.Contains("在現代社會成為乙女遊戲的惡役千金有點不容易"))
                                     {
-                                        //chapterlist.Children();
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        continueFlag = true;
+                                    }
+                                }
 
-                                        //讀取a元素(超聯結) 底下全部的字
-                                        Console.Write(index + " ");
+                                Console.WriteLine(novelName);
+                                Console.WriteLine();
 
-                                        string chapterTitle = element_A_Tag.TextContent;
-                                        Console.Write(chapterTitle);
-                                        stringBuilder.Append("[[");
-                                        stringBuilder.Append(index);
-                                        stringBuilder.Append("]]");
-                                        stringBuilder.Append(" ");
-                                        //內文已有標題則此處不在加標題
-                                        stringBuilder.Append(chapterTitle);
+                                StringBuilder stringBuilder = new StringBuilder();
+
+                                try
+                                {
+                                    IDocument chapterDom;
+                                    using (HttpResponseMessage novelHtml = await httpClient.GetAsync(novelurl))
+                                    {
+                                        string novelPageResponse = await novelHtml.Content.ReadAsStringAsync();
+
+                                        chapterDom = await htmlReaderContext.OpenAsync(res => res.Content(novelPageResponse));
+
+
+                                        IHtmlCollection<IElement> bookTitle = chapterDom.QuerySelectorAll("h2");
+
+                                        stringBuilder.Append(bookTitle[0].TextContent);
                                         stringBuilder.Append("\r\n\r\n");
 
-                                        string chapterHyperLink = element_A_Tag.Attributes["href"].Value;
-
-                                        if (!chapterHyperLink.Contains("esjzone"))
+                                        IHtmlCollection<IElement> chapterlist = chapterDom.QuerySelectorAll("#chapterList");
+                                        int index = 1;
+                                        foreach (IElement element_A_Tag in chapterlist.Children("a"))
                                         {
-                                            stringBuilder.Append("此章非esjzone站內文章 爬取失敗");
-                                            stringBuilder.Append("\r\n");
+                                            //chapterlist.Children();
+
+                                            //讀取a元素(超聯結) 底下全部的字
+                                            Console.Write(index + " ");
+
+                                            string chapterTitle = element_A_Tag.TextContent;
+                                            Console.Write(chapterTitle);
+                                            stringBuilder.Append("[[");
+                                            stringBuilder.Append(index);
+                                            stringBuilder.Append("]]");
+                                            stringBuilder.Append(" ");
+                                            //內文已有標題則此處不在加標題
+                                            stringBuilder.Append(chapterTitle);
+                                            stringBuilder.Append("\r\n\r\n");
+
+                                            string chapterHyperLink = element_A_Tag.Attributes["href"].Value;
+
+                                            if (!chapterHyperLink.Contains("esjzone"))
+                                            {
+                                                stringBuilder.Append("此章非esjzone站內文章 爬取失敗");
+                                                stringBuilder.Append("\r\n");
+
+                                                index++;
+                                                continue;
+                                            }
+
+                                            Console.Write(chapterHyperLink);
+                                            Console.WriteLine();
+
+                                            #region 小說內文
+
+                                            IDocument contentDom;
+                                            using (HttpResponseMessage contentHtml = await httpClient.GetAsync(chapterHyperLink))
+                                            {
+                                                //取得內容
+                                                string contentResponseResult = await contentHtml.Content.ReadAsStringAsync();
+
+                                                //增長request間隔時間 避免被誤認為ddos
+                                                Thread.Sleep(300);
+
+                                                //內文在 .forum-content children <p>裡面
+                                                contentDom = await htmlReaderContext.OpenAsync(res => res.Content(contentResponseResult));
+                                            }
+
+                                            IHtmlCollection<IElement> contentText = contentDom.QuerySelectorAll(".forum-content");
+
+                                            foreach (IElement content_P_Element in contentText.Children("p"))
+                                            {
+                                                string strContent = content_P_Element.TextContent;
+                                                if (strContent.Length > 0 && !string.IsNullOrEmpty(strContent))
+                                                {
+                                                    stringBuilder.Append("\r\n");
+                                                    stringBuilder.Append(strContent);
+                                                    stringBuilder.Append("\r\n");
+                                                }
+                                            }
+                                            #endregion
 
                                             index++;
-                                            continue;
                                         }
 
-                                        Console.Write(chapterHyperLink);
-                                        Console.WriteLine();
-
-                                        #region 小說內文
-
-                                        IDocument contentDom;
-                                        using (HttpResponseMessage contentHtml = await httpClient.GetAsync(chapterHyperLink))
-                                        {
-                                            //取得內容
-                                            string contentResponseResult = await contentHtml.Content.ReadAsStringAsync();
-
-                                            //增長request間隔時間 避免被誤認為ddos
-                                            Thread.Sleep(300);
-
-                                            //內文在 .forum-content children <p>裡面
-                                            contentDom = await htmlReaderContext.OpenAsync(res => res.Content(contentResponseResult));
-                                        }
-
-                                        IHtmlCollection<IElement> contentText = contentDom.QuerySelectorAll(".forum-content");
-
-                                        foreach (IElement content_P_Element in contentText.Children("p"))
-                                        {
-                                            string strContent = content_P_Element.TextContent;
-                                            if (strContent.Length > 0 && !string.IsNullOrEmpty(strContent))
-                                            {
-                                                stringBuilder.Append("\r\n");
-                                                stringBuilder.Append(strContent);
-                                                stringBuilder.Append("\r\n");
-                                            }
-                                        }
-                                        #endregion
-
-                                        index++;
+                                        SaveFile(novelName, stringBuilder);
+                                        //Directory.CreateDirectory("./" + novelName);
+                                        //FileUtil.WriteFile("./" + novelName + "/" + novelName + " " + index + ".txt", stringBuilder.ToString());
                                     }
+                                }
+                                catch (Exception ex)
+                                {
+                                    SaveFile(novelName, stringBuilder);
 
-                                    Directory.CreateDirectory("./" + novelName);
-                                    FileUtil.WriteFile("./" + novelName + "/Output.txt", stringBuilder.ToString());
+                                    Console.WriteLine(novelName + "爬取失敗");
+                                    Console.WriteLine(ex.Message);
+                                    continue;
                                 }
 
                             }
@@ -274,6 +306,28 @@ namespace ESJZoneReptile
                     }
                 }
 
+            }
+        }
+
+        private static void SaveFile(string novelName, StringBuilder stringBuilder)
+        {
+            try
+            {
+                Directory.CreateDirectory("./" + novelName);
+                FileUtil.WriteFile("./" + novelName + "/" + novelName + " 抓取未完成.txt", stringBuilder.ToString());
+            }
+            catch (Exception ex)
+            {
+                if (novelName.Length > 1)
+                {
+                    string tempName = novelName.Substring(0, novelName.Length - 2);
+                    SaveFile(tempName, stringBuilder);
+                }
+                else
+                {
+                    Console.WriteLine(novelName + "已有小說內容因檔案存取失敗遺失");
+                    Console.WriteLine(ex.Message);
+                }
             }
         }
 
